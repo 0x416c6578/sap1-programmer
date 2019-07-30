@@ -46,23 +46,21 @@ char PROGRAM[][32] = {{LDI, 0x1, STA, 0xD, LDI, 0x0, STA, 0xE, STA, 0xF, LDA, 0x
 };
 
 const int DELAYTIME = 50;
-const int PROGNUM = 0;
+//const int PROGNUM = 0;
 
 void setup() {
   for (int i = 2; i <= 13; i++) {
     pinMode(i, OUTPUT);   //make pins outputs
   }
   pinMode(A0, OUTPUT);
-  writeProgram();
+  char PROGNUM = getProgram();
+  Serial.begin(115200);
+  Serial.println();
+  //writeProgram(PROGNUM);
 }
 
-void loop() {
-
-}
-
-void writeProgram(void) {
+void writeProgram(char PROGNUM) {
   char tempInst, tempOperand, tempAddr;
-  getProgram();
   for (char i = 0; i <= 15; i += 1) {
     tempAddr = i;  //address
     tempInst = PROGRAM[PROGNUM][i * 2];  //gets instruction from program array
@@ -102,24 +100,38 @@ void writeThis(char address, char byteToWrite) {
   digitalWrite(A0, HIGH);
 }
 
-  /* It is ok to write a non boolean value (ie not LOW or HIGH) to digitalWrite as the internal function will only set a pin LOW
-     if the argument is a 0, else it will set it high, so when we and say address [0010] with 0100, digitalWrite will write
-     LOW to the pin as the result of or'ing those together is 0000, whereas say if we were to and it with 0010, we would effectively
-     be saying digitalWrite(pin, 0010), however as 0010 is a non zero value, digitalWrite will pull the pin high regardless, as 0010 is
-     a non zero value.
+/* It is ok to write a non boolean value (ie not LOW or HIGH) to digitalWrite as the internal function will only set a pin LOW
+   if the argument is a 0, else it will set it high, so when we and say address [0010] with 0100, digitalWrite will write
+   LOW to the pin as the result of or'ing those together is 0000, whereas say if we were to and it with 0010, we would effectively
+   be saying digitalWrite(pin, 0010), however as 0010 is a non zero value, digitalWrite will pull the pin high regardless, as 0010 is
+   a non zero value.
 
-     We can see this by looking at the line:
-     if (val == LOW) {
-                 out &= ~bit;
-         } else {
-                 out |= bit;
-         }
-     from the source code. Without worrying about the variable names, you can see that an else statement is used, rather than an else if,
-     meaning that any non zero value will pull the pin high.
-  */
-void getProgram(){
-  pinMode(A1,OUTPUT)
-  pinMode(A2,OUTPUT)
-  pinMode(A3,OUTPUT)
-  pinMode(A4,OUTPUT)
+   We can see this by looking at the line:
+   if (val == LOW) {
+               out &= ~bit;
+       } else {
+               out |= bit;
+       }
+   from the source code. Without worrying about the variable names, you can see that an else statement is used, rather than an else if,
+   meaning that any non zero value will pull the pin high.
+*/
+char getProgram() {
+  pinMode(A1, INPUT);
+  pinMode(A2, INPUT);
+  pinMode(A3, INPUT);
+  pinMode(A4, INPUT);
+  char programNumber = 0b00000000;
+  programNumber += digitalRead(A1);
+  programNumber = programNumber << 1;
+  programNumber += digitalRead(A2);
+  programNumber = programNumber << 1;
+  programNumber += digitalRead(A3);
+  programNumber = programNumber << 1;
+  programNumber += digitalRead(A4);
+  programNumber = programNumber << 1;
+  return programNumber;
+}
+
+void loop() {
+
 }
