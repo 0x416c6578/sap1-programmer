@@ -1,4 +1,5 @@
 /*
+  Pin definitions:
   const int address3 = 5; upper bit
   const int address2 = 4;
   const int address1 = 3;
@@ -14,8 +15,6 @@
   const int operand1 = 11;
   const int operand0 = 10; lower bit
 
-
-
   Programming:
   0000            NOP       - No operation
   0001 [Addr]     LDA       - Load value at address [Addr] into A register
@@ -30,30 +29,6 @@
   1111            HLT       - Halt execution
 */
 
-
-/*
-
-  digitalWrite(2, 0); LOWER ADDR
-  digitalWrite(3, 0);
-  digitalWrite(4, 0);
-  digitalWrite(5, 1); UPPER ADDR
-  digitalWrite(6, 1);LOWER INST
-  digitalWrite(7, 0);
-  digitalWrite(8, 0);
-  digitalWrite(9, 0); UPPER INST
-  digitalWrite(10, 1); LOWER OPERAND
-  digitalWrite(11, 1);
-  digitalWrite(12, 1);
-  digitalWrite(13, 1); UPPER OPERAND
-  delay(delayTime);
-
-  digitalWrite(A0, 0); WRITE
-  delay(delayTime);
-  digitalWrite(A0, 1);
-  delay(delayTime);
-*/
-
-
 #define NOP 0b00000000
 #define LDA 0b00000001
 #define ADD 0b00000010
@@ -64,21 +39,14 @@
 #define OUT 0b00001110
 #define HLT 0b00001111
 
-
-//char PROGRAM[] = {LDI, 0x1, STA, 0xD, LDI, 0x0, STA, 0xE, STA, 0xF, LDA, 0xE, ADD, 0xD, STA, 0xE, LDA, 0xF, ADD, 0xE, OUT, 0x0, STA, 0xF, JMP, 0x5, 0x0, 0x1, 0x0, 0x0, 0x0, 0x0};  //triangle numbers
-//char PROGRAM[] = {LDI, 0x1, STA, 0xE, LDI, 0x0, OUT, 0x0, ADD, 0xE, STA, 0xF, LDA, 0xE, STA, 0xD, LDA, 0xF, STA, 0xE, LDA, 0xD, JMP, 0x3, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0};  //fibonacci
-//char PROGRAM[] = {LDI, 0x1, STA, 0xF, OUT, 0x0, ADD, 0xF, JMP, 0x2, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0};  //simple counter
-//char PROGRAM[] = {LDI, 0x1, STA, 0xE, LDI, 0xF, STA, 0xF, LDA, 0xE, ADD, 0xF, OUT, 0x0, HLT, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0};  //simple adder
-
 char PROGRAM[][32] = {{LDI, 0x1, STA, 0xD, LDI, 0x0, STA, 0xE, STA, 0xF, LDA, 0xE, ADD, 0xD, STA, 0xE, LDA, 0xF, ADD, 0xE, OUT, 0x0, STA, 0xF, JMP, 0x5, 0x0, 0x1, 0x0, 0x0, 0x0, 0x0},  //triangle numbers
   {LDI, 0x1, STA, 0xE, LDI, 0x0, OUT, 0x0, ADD, 0xE, STA, 0xF, LDA, 0xE, STA, 0xD, LDA, 0xF, STA, 0xE, LDA, 0xD, JMP, 0x3, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0},  //fibonacci
   {LDI, 0x1, STA, 0xF, OUT, 0x0, ADD, 0xF, JMP, 0x2, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0},  //simple counter
   {LDI, 0x1, STA, 0xE, LDI, 0xF, STA, 0xF, LDA, 0xE, ADD, 0xF, OUT, 0x0, HLT, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0}  //simple adder
 };
 
-const int delayTime = 50;
-const int progNum = 0;
-
+const int DELAYTIME = 50;
+const int PROGNUM = 0;
 
 void setup() {
   for (int i = 2; i <= 13; i++) {
@@ -96,12 +64,12 @@ void writeProgram(void) {
   char tempInst, tempOperand, tempAddr;
   for (char i = 0; i <= 15; i += 1) {
     tempAddr = i;  //address
-    tempInst = PROGRAM[progNum][i * 2];  //gets instruction from program array
-    tempOperand = PROGRAM[progNum][(i * 2) + 1];  //gets operand from program array
+    tempInst = PROGRAM[PROGNUM][i * 2];  //gets instruction from program array
+    tempOperand = PROGRAM[PROGNUM][(i * 2) + 1];  //gets operand from program array
     tempInst = tempInst << 4;  //bit shifts instruction so that the instruction word is in the highest 4 bits of the byte
     char tempByteToWrite = tempInst | tempOperand;  //oring the instruction with the operand yields a byte that can then be written into RAM
     writeThis(tempAddr, tempByteToWrite);  //write the byte to its corresponding address
-    delay(delayTime);
+    delay(DELAYTIME);
   }
 }
 
@@ -129,7 +97,7 @@ void writeThis(char address, char byteToWrite) {
   digitalWrite(10, byteToWrite & 0b00000001);  //operand lower bit
 
   digitalWrite(A0, LOW);
-  delay(delayTime);
+  delay(DELAYTIME);
   digitalWrite(A0, HIGH);
 
   /* It is ok to write a non boolean value (ie not LOW or HIGH) to digitalWrite as the internal function will only set a pin LOW
