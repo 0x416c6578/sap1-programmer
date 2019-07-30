@@ -62,6 +62,7 @@ void loop() {
 
 void writeProgram(void) {
   char tempInst, tempOperand, tempAddr;
+  getProgram();
   for (char i = 0; i <= 15; i += 1) {
     tempAddr = i;  //address
     tempInst = PROGRAM[PROGNUM][i * 2];  //gets instruction from program array
@@ -99,6 +100,7 @@ void writeThis(char address, char byteToWrite) {
   digitalWrite(A0, LOW);
   delay(DELAYTIME);
   digitalWrite(A0, HIGH);
+}
 
   /* It is ok to write a non boolean value (ie not LOW or HIGH) to digitalWrite as the internal function will only set a pin LOW
      if the argument is a 0, else it will set it high, so when we and say address [0010] with 0100, digitalWrite will write
@@ -115,5 +117,9 @@ void writeThis(char address, char byteToWrite) {
      from the source code. Without worrying about the variable names, you can see that an else statement is used, rather than an else if,
      meaning that any non zero value will pull the pin high.
   */
-
+void getProgram(){
+  pinMode(A1,OUTPUT)
+  pinMode(A2,OUTPUT)
+  pinMode(A3,OUTPUT)
+  pinMode(A4,OUTPUT)
 }
