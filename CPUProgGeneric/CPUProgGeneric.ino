@@ -112,7 +112,8 @@ void writeThis(char address, char byteToWrite) {
        } else {
                out |= bit;
        }
-   from the source code. Without worrying about the variable names, you can see that an else statement is used, rather than an else if,
+   from the source code. 
+   Without worrying about the variable names, you can see that an else statement is used, rather than an else if,
    meaning that any non zero value will pull the pin high.
 */
 char getProgram() {
